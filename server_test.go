@@ -6,6 +6,10 @@ import (
 )
 
 func TestCreateFile(t *testing.T) {
+	// setup code. clear files
+	os.RemoveAll("files/")
+	os.Mkdir("files/", os.ModePerm)
+
 	// test file creating
 	err := Create("test.txt")
 	if err != nil {
