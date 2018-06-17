@@ -19,7 +19,7 @@ func TestCreateFile(t *testing.T) {
 	if _, err = os.Stat("files/test.txt"); os.IsNotExist(err) {
 		t.Error("File not created")
 	}
-	// check file contents
+	// test file contents
 	if dat, _ := ioutil.ReadFile("files/test.txt"); string(dat) != "test file\n" {
 		t.Error("File content not being writen")
 	}
