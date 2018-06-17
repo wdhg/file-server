@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const dir = "files/"
@@ -17,6 +18,12 @@ func pathExists(path string) bool {
 // Create is called on POST requests to create new files
 func Create(filename string, contents string) error {
 	filename = dir + filename
+	// check if file is valid
+	filenameAbs, _ := filepath.Abs(filename)
+	dirAbs, _ := filepath.Abs(dir)
+	if !strings.Contains(filenameAbs, dirAbs) {
+		return errors.New("File above allocated directory")
+	}
 	// check if file already exists
 	if pathExists(filename) {
 		return errors.New("File already exists")
