@@ -11,6 +11,7 @@ var testFiles = []struct {
 	contents string
 }{
 	{"test.txt", "test file\n"},
+	{"test/test.txt", "test file\n"},
 }
 
 func TestCreateFile(t *testing.T) {
