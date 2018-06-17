@@ -30,7 +30,7 @@ func Create(filename string, contents string) error {
 	}
 	dir := filepath.Dir(filename)
 	// create directory if it doesn't exist
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
+	if !pathExists(dir) {
 		os.MkdirAll(dir, os.ModePerm)
 	}
 	file, _ := os.Create(filename)
