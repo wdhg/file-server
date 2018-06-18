@@ -16,7 +16,7 @@ var testFiles = []struct {
 	{"../test.txt", "test file\n", false},
 }
 
-func TestCreateFile(t *testing.T) {
+func TestCreate(t *testing.T) {
 	// setup code. clear files
 	os.RemoveAll("files/")
 	os.Mkdir("files/", os.ModePerm)
@@ -24,14 +24,14 @@ func TestCreateFile(t *testing.T) {
 	for _, testFile := range testFiles {
 		file, contents := testFile.name, testFile.contents
 		if testFile.valid {
-			doTestValidFile(t, file, contents)
+			doTestCreateValid(t, file, contents)
 		} else {
-			doTestInvalidFile(t, file, contents)
+			doTestCreateInvalid(t, file, contents)
 		}
 	}
 }
 
-func doTestValidFile(t *testing.T, file, contents string) {
+func doTestCreateValid(t *testing.T, file, contents string) {
 	// test file creating
 	err := Create(file, contents)
 	if err != nil {
@@ -51,7 +51,7 @@ func doTestValidFile(t *testing.T, file, contents string) {
 	}
 }
 
-func doTestInvalidFile(t *testing.T, file, contents string) {
+func doTestCreateInvalid(t *testing.T, file, contents string) {
 	err := Create(file, contents)
 	if err == nil {
 		t.Errorf("Can create file %s", file)
