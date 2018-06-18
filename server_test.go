@@ -18,7 +18,7 @@ var testFiles = []struct {
 
 func TestCreate(t *testing.T) {
 	// setup code
-	os.Mkdir("files/", os.ModePerm)
+	os.Mkdir(dir, os.ModePerm)
 
 	for _, testFile := range testFiles {
 		file, contents := testFile.name, testFile.contents
@@ -30,7 +30,7 @@ func TestCreate(t *testing.T) {
 	}
 
 	// teardown code
-	os.RemoveAll("files/")
+	os.RemoveAll(dir)
 }
 
 func doTestCreateValid(t *testing.T, file, contents string) {
@@ -39,11 +39,11 @@ func doTestCreateValid(t *testing.T, file, contents string) {
 	if err != nil {
 		t.Errorf("Throwing error on making %s for first time", file)
 	}
-	if _, err = os.Stat("files/" + file); os.IsNotExist(err) {
+	if _, err = os.Stat(dir + file); os.IsNotExist(err) {
 		t.Errorf("%s not created", file)
 	}
 	// test file contents
-	if dat, _ := ioutil.ReadFile("files/" + file); string(dat) != contents {
+	if dat, _ := ioutil.ReadFile(dir + file); string(dat) != contents {
 		t.Errorf("%s contents not being writen", file)
 	}
 	// test attempting to recreate files
