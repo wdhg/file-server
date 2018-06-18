@@ -37,6 +37,10 @@ func Create(filename string, contents string) error {
 	return nil
 }
 
+func Delete(filename string) error {
+	return nil
+}
+
 func main() {
 	fmt.Println("hello")
 }

@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-var testFiles = []struct {
+var testCreateFiles = []struct {
 	name     string
 	contents string
 	valid    bool
@@ -15,17 +15,22 @@ var testFiles = []struct {
 	{"test/test.txt", "test file\n", true},
 	{"../test.txt", "test file\n", false},
 }
+var testDeleteFiles = []struct {
+	name string
+	path string
+}{
+	{"test.txt", ""},
+}
 
 func TestCreate(t *testing.T) {
 	// setup code
 	os.Mkdir(dir, os.ModePerm)
 
-	for _, testFile := range testFiles {
-		file, contents := testFile.name, testFile.contents
+	for _, testFile := range testCreateFiles {
 		if testFile.valid {
-			doTestCreateValid(t, file, contents)
+			doTestCreateValid(t, testFile.name, testFile.contents)
 		} else {
-			doTestCreateInvalid(t, file, contents)
+			doTestCreateInvalid(t, testFile.name, testFile.contents)
 		}
 	}
 
@@ -58,4 +63,27 @@ func doTestCreateInvalid(t *testing.T, file, contents string) {
 	if err == nil {
 		t.Errorf("Can create file %s", file)
 	}
+}
+
+func TestDelete(t *testing.T) {
+	// setup code
+	os.Mkdir(dir, os.ModePerm)
+
+	for _, testFile := range testDeleteFiles {
+		path := dir + testFile.path
+		file := path + testFile.name
+		os.MkdirAll(path, os.ModePerm)
+		os.Create(file)
+		// test deleting file
+		err := Delete(file)
+		if err != nil {
+			t.Errorf("Throwing error on deleting %s", file)
+		}
+		if _, err := os.Stat(file); !os.IsNotExist(err) {
+			t.Errorf("%s not deleted", file)
+		}
+	}
+
+	// teardown code
+	os.RemoveAll(dir)
 }
