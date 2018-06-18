@@ -17,8 +17,7 @@ var testFiles = []struct {
 }
 
 func TestCreate(t *testing.T) {
-	// setup code. clear files
-	os.RemoveAll("files/")
+	// setup code
 	os.Mkdir("files/", os.ModePerm)
 
 	for _, testFile := range testFiles {
@@ -29,6 +28,9 @@ func TestCreate(t *testing.T) {
 			doTestCreateInvalid(t, file, contents)
 		}
 	}
+
+	// teardown code
+	os.RemoveAll("files/")
 }
 
 func doTestCreateValid(t *testing.T, file, contents string) {
