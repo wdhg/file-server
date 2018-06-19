@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"testing"
@@ -141,6 +143,25 @@ func TestDelete(t *testing.T) {
 		}
 		if _, err := os.Stat(dir + file.path); !os.IsNotExist(err) {
 			t.Errorf("%s not deleted", file.path)
+		}
+	}
+
+	os.RemoveAll(dir)
+}
+
+func TestServerGet(t *testing.T) {
+	os.Mkdir(dir, os.ModePerm)
+	router := CreateRouter()
+
+	for _, file := range getFiles {
+		os.Mkdir(dir+filepath.Dir(file.path), os.ModePerm)
+		fileWriter, _ := os.Create(dir + file.path)
+		fmt.Fprintf(fileWriter, file.contents)
+		writer := httptest.NewRecorder()
+		req, _ := http.NewRequest("GET", "/files/"+file.path, nil)
+		router.ServeHTTP(writer, req)
+		if writer.Body.String() != file.contents {
+			t.Errorf("Served file contents for %s are incorrect", file.path)
 		}
 	}
 
