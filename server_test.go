@@ -82,8 +82,6 @@ func TestDelete(t *testing.T) {
 		if _, err := os.Stat(dir + file.path); !os.IsNotExist(err) {
 			t.Errorf("%s not deleted", file.path)
 		}
-		// make sure file is deleted
-		os.Remove(dir + file.path)
 	}
 
 	os.RemoveAll(dir)
