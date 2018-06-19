@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -22,7 +23,15 @@ func accessible(file string) bool {
 }
 
 func Get(file string) (string, error) {
-	return "", nil
+	file = dir + file
+	if !accessible(file) {
+		return "", errors.New("File above allocated directory")
+	}
+	if !exists(file) {
+		return "", errors.New("File does not exist")
+	}
+	data, _ := ioutil.ReadFile(file)
+	return string(data), nil
 }
 
 func Create(file string, contents string) error {
