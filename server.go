@@ -21,13 +21,11 @@ func accessible(file string) bool {
 	return strings.Index(x, y) == 0
 }
 
-// Create is called on POST requests to create new files
 func Create(file string, contents string) error {
 	file = dir + file
 	if !accessible(file) {
 		return errors.New("File above allocated directory")
 	}
-	// check if file already exists
 	if exists(file) {
 		return errors.New("File already exists")
 	}
@@ -38,7 +36,9 @@ func Create(file string, contents string) error {
 }
 
 func Delete(file string) error {
-	os.Remove(file)
+	if accessible(file) {
+		os.Remove(file)
+	}
 	return nil
 }
 
