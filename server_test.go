@@ -67,22 +67,23 @@ func TestDelete(t *testing.T) {
 			}
 			continue
 		}
+		// test deleting file that doesn't exist
+		err := Delete(file.path)
+		if err != nil {
+			t.Errorf("Error not returned when trying to delete deleted file %s", file.path)
+		}
 		os.MkdirAll(dir+file.path, os.ModePerm)
 		os.Create(dir + file.path)
 		// test deleting file
-		err := Delete(file.path)
+		err = Delete(file.path)
 		if err != nil {
 			t.Errorf("Error returned when deleting %s", file.path)
 		}
 		if _, err := os.Stat(dir + file.path); !os.IsNotExist(err) {
 			t.Errorf("%s not deleted", file.path)
 		}
-		// test redeleting files
+		// make sure file is deleted
 		os.Remove(dir + file.path)
-		err = Delete(file.path)
-		if err != nil {
-			t.Errorf("Error not returned when trying to delete deleted file %s", file.path)
-		}
 	}
 
 	os.RemoveAll(dir)
