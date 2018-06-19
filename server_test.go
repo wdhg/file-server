@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-var testCreateFiles = []struct {
+var createFiles = []struct {
 	name     string
 	contents string
 	valid    bool
@@ -15,7 +15,7 @@ var testCreateFiles = []struct {
 	{"test/test.txt", "test file\n", true},
 	{"../test.txt", "test file\n", false},
 }
-var testDeleteFiles = []struct {
+var deleteFiles = []struct {
 	name string
 	path string
 }{
@@ -23,22 +23,20 @@ var testDeleteFiles = []struct {
 }
 
 func TestCreate(t *testing.T) {
-	// setup code
 	os.Mkdir(dir, os.ModePerm)
 
-	for _, testFile := range testCreateFiles {
+	for _, testFile := range createFiles {
 		if testFile.valid {
-			doTestCreateValid(t, testFile.name, testFile.contents)
+			testCreateValid(t, testFile.name, testFile.contents)
 		} else {
-			doTestCreateInvalid(t, testFile.name, testFile.contents)
+			testCreateInvalid(t, testFile.name, testFile.contents)
 		}
 	}
 
-	// teardown code
 	os.RemoveAll(dir)
 }
 
-func doTestCreateValid(t *testing.T, file, contents string) {
+func testCreateValid(t *testing.T, file, contents string) {
 	// test file creating
 	err := Create(file, contents)
 	if err != nil {
@@ -58,7 +56,7 @@ func doTestCreateValid(t *testing.T, file, contents string) {
 	}
 }
 
-func doTestCreateInvalid(t *testing.T, file, contents string) {
+func testCreateInvalid(t *testing.T, file, contents string) {
 	err := Create(file, contents)
 	if err == nil {
 		t.Errorf("Can create file %s", file)
@@ -66,10 +64,9 @@ func doTestCreateInvalid(t *testing.T, file, contents string) {
 }
 
 func TestDelete(t *testing.T) {
-	// setup code
 	os.Mkdir(dir, os.ModePerm)
 
-	for _, testFile := range testDeleteFiles {
+	for _, testFile := range deleteFiles {
 		file := dir + testFile.path + testFile.name
 		os.MkdirAll(dir+testFile.path, os.ModePerm)
 		os.Create(file)
@@ -83,6 +80,5 @@ func TestDelete(t *testing.T) {
 		}
 	}
 
-	// teardown code
 	os.RemoveAll(dir)
 }

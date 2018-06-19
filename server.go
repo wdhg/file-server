@@ -5,40 +5,40 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const dir = "files/"
 
-func pathExists(path string) bool {
-	_, err := os.Stat(path)
+func exists(file string) bool {
+	_, err := os.Stat(file)
 	return err == nil
 }
 
+func accessible(file string) bool {
+	x, _ := filepath.Abs(file)
+	y, _ := filepath.Abs(dir)
+	return strings.Index(x, y) == 0
+}
+
 // Create is called on POST requests to create new files
-func Create(filename string, contents string) error {
-	filename = dir + filename
-	// check if file is valid
-	filenameAbs, _ := filepath.Abs(filename)
-	dirAbs, _ := filepath.Abs(dir)
-	if len(filenameAbs) < len(dirAbs) || filenameAbs[:len(dirAbs)] != dirAbs {
+func Create(file string, contents string) error {
+	file = dir + file
+	if !accessible(file) {
 		return errors.New("File above allocated directory")
 	}
 	// check if file already exists
-	if pathExists(filename) {
+	if exists(file) {
 		return errors.New("File already exists")
 	}
-	dir := filepath.Dir(filename)
-	// create directory if it doesn't exist
-	if !pathExists(dir) {
-		os.MkdirAll(dir, os.ModePerm)
-	}
-	file, _ := os.Create(filename)
-	fmt.Fprintf(file, contents)
+	os.MkdirAll(filepath.Dir(file), os.ModePerm)
+	fileWriter, _ := os.Create(file)
+	fmt.Fprintf(fileWriter, contents)
 	return nil
 }
 
-func Delete(filename string) error {
-	os.Remove(filename)
+func Delete(file string) error {
+	os.Remove(file)
 	return nil
 }
 
