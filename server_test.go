@@ -154,9 +154,11 @@ func TestServerGet(t *testing.T) {
 	router := CreateRouter()
 
 	for _, file := range getFiles {
+		// make the file
 		os.Mkdir(dir+filepath.Dir(file.path), os.ModePerm)
 		fileWriter, _ := os.Create(dir + file.path)
 		fmt.Fprintf(fileWriter, file.contents)
+		// test getting file contents through the server
 		writer := httptest.NewRecorder()
 		req, _ := http.NewRequest("GET", "/files/"+file.path, nil)
 		router.ServeHTTP(writer, req)
