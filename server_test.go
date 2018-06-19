@@ -22,6 +22,9 @@ var createFiles = []File{
 	{"test/test.txt", "test file\n", true},
 	{"../test.txt", "test file\n", false},
 }
+var updateFiles = []File{
+	{"test.txt", "test file\n", true},
+}
 var deleteFiles = []File{
 	{"test.txt", "", true},
 	{"../test.txt", "", false},
@@ -80,6 +83,27 @@ func TestCreate(t *testing.T) {
 		err = Create(file.path, file.contents)
 		if err == nil {
 			t.Errorf("Recreating %s not returning error", file.path)
+		}
+	}
+
+	os.RemoveAll(dir)
+}
+
+func TestUpdate(t *testing.T) {
+	os.Mkdir(dir, os.ModePerm)
+
+	for _, file := range updateFiles {
+		// test updating nonexistent file
+		err := Update(file.path, file.contents)
+		if err == nil {
+			t.Errorf("Not returning error when updating noexistent file %s", file.path)
+		}
+		os.MkdirAll(dir+filepath.Dir(file.path), os.ModePerm)
+		os.Create(dir + file.path)
+		// test updating a file
+		err = Update(file.path, file.contents)
+		if err != nil {
+			t.Errorf("Returning error when updating file %s", file.path)
 		}
 	}
 

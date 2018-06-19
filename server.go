@@ -48,6 +48,10 @@ func Create(file string, contents string) error {
 	return nil
 }
 
+func Update(file, contents string) error {
+	return nil
+}
+
 func Delete(file string) error {
 	file = dir + file
 	if !accessible(file) {
