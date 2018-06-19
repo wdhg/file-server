@@ -38,6 +38,7 @@ func Create(filename string, contents string) error {
 }
 
 func Delete(filename string) error {
+	os.Remove(filename)
 	return nil
 }
 
