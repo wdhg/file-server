@@ -3,6 +3,7 @@ package main
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -73,7 +74,7 @@ func TestDelete(t *testing.T) {
 			t.Errorf("Error not returned when trying to delete deleted file %s", file.path)
 		}
 		// make the file
-		os.MkdirAll(dir+file.path, os.ModePerm)
+		os.MkdirAll(filepath.Dir(dir+file.path), os.ModePerm)
 		os.Create(dir + file.path)
 		// test deleting file
 		err = Delete(file.path)
