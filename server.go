@@ -21,6 +21,10 @@ func accessible(file string) bool {
 	return strings.Index(x, y) == 0
 }
 
+func Get(file string) (string, error) {
+	return "", nil
+}
+
 func Create(file string, contents string) error {
 	file = dir + file
 	if !accessible(file) {
@@ -36,6 +40,7 @@ func Create(file string, contents string) error {
 }
 
 func Delete(file string) error {
+	file = dir + file
 	if !accessible(file) {
 		return errors.New("File above allocated directory")
 	}
