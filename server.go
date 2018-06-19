@@ -36,9 +36,10 @@ func Create(file string, contents string) error {
 }
 
 func Delete(file string) error {
-	if accessible(file) {
-		os.Remove(file)
+	if !accessible(file) {
+		return errors.New("File above allocated directory")
 	}
+	os.Remove(file)
 	return nil
 }
 
