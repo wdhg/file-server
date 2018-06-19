@@ -36,7 +36,7 @@ func TestCreate(t *testing.T) {
 		// test file creating
 		err := Create(file.path, file.contents)
 		if err != nil {
-			t.Errorf("Throwing error on making %s for first time", file.path)
+			t.Errorf("Error returned when making %s for first time", file.path)
 		}
 		if _, err = os.Stat(dir + file.path); os.IsNotExist(err) {
 			t.Errorf("%s not created", file.path)
@@ -48,7 +48,7 @@ func TestCreate(t *testing.T) {
 		// test attempting to recreate files
 		err = Create(file.path, file.contents)
 		if err == nil {
-			t.Errorf("Recreating %s not throwing error", file.path)
+			t.Errorf("Recreating %s not returning error", file.path)
 		}
 	}
 
@@ -72,7 +72,7 @@ func TestDelete(t *testing.T) {
 		// test deleting file
 		err := Delete(file.path)
 		if err != nil {
-			t.Errorf("Throwing error on deleting %s", file.path)
+			t.Errorf("Error returned when deleting %s", file.path)
 		}
 		if _, err := os.Stat(dir + file.path); !os.IsNotExist(err) {
 			t.Errorf("%s not deleted", file.path)
@@ -81,7 +81,7 @@ func TestDelete(t *testing.T) {
 		os.Remove(dir + file.path)
 		err = Delete(file.path)
 		if err != nil {
-			t.Errorf("Not throwing error when trying to delete deleted file %s", file.path)
+			t.Errorf("Error not returned when trying to delete deleted file %s", file.path)
 		}
 	}
 
