@@ -4,9 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 const dir = "files/"
@@ -69,6 +72,18 @@ func Delete(file string) error {
 	return nil
 }
 
+func CreateRouter() *gin.Engine {
+	r := gin.Default()
+
+	r.GET("/files/*path", func(c *gin.Context) {
+		contents, _ := Get(c.Param("path"))
+		c.String(http.StatusOK, contents)
+	})
+
+	return r
+}
+
 func main() {
-	fmt.Println("hello")
+	os.Mkdir(dir, os.ModePerm)
+	CreateRouter().Run(":8000")
 }
