@@ -105,6 +105,10 @@ func TestUpdate(t *testing.T) {
 		if err != nil {
 			t.Errorf("Returning error when updating file %s", file.path)
 		}
+		// test file contents
+		if dat, _ := ioutil.ReadFile(dir + file.path); string(dat) != file.contents {
+			t.Errorf("%s contents not being updated", file.path)
+		}
 	}
 
 	os.RemoveAll(dir)
