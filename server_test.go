@@ -19,6 +19,7 @@ var createFiles = []File{
 }
 var deleteFiles = []File{
 	{"test.txt", "", true},
+	{"../test.txt", "", false},
 }
 
 func TestCreate(t *testing.T) {
@@ -58,6 +59,14 @@ func TestDelete(t *testing.T) {
 	os.Mkdir(dir, os.ModePerm)
 
 	for _, file := range deleteFiles {
+		if !file.valid {
+			// test deleting files outside allocated directory
+			err := Delete(file.path)
+			if err == nil {
+				t.Errorf("Error not returned when trying to delete unaccessible file %s", file.path)
+			}
+			continue
+		}
 		os.MkdirAll(dir+file.path, os.ModePerm)
 		os.Create(dir + file.path)
 		// test deleting file
