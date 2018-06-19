@@ -70,9 +70,8 @@ func TestDelete(t *testing.T) {
 	os.Mkdir(dir, os.ModePerm)
 
 	for _, testFile := range testDeleteFiles {
-		path := dir + testFile.path
-		file := path + testFile.name
-		os.MkdirAll(path, os.ModePerm)
+		file := dir + testFile.path + testFile.name
+		os.MkdirAll(dir+testFile.path, os.ModePerm)
 		os.Create(file)
 		// test deleting file
 		err := Delete(file)
