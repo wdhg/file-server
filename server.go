@@ -56,7 +56,7 @@ func Update(file, contents string) error {
 	if !exists(file) {
 		return errors.New("File does not exist")
 	}
-	ioutil.WriteFile(dir+file, []byte(contents), os.ModePerm)
+	ioutil.WriteFile(file, []byte(contents), os.ModePerm)
 	return nil
 }
 
