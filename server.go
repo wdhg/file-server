@@ -49,6 +49,14 @@ func Create(file string, contents string) error {
 }
 
 func Update(file, contents string) error {
+	file = dir + file
+	if !accessible(file) {
+		return errors.New("File above allocated directory")
+	}
+	if !exists(file) {
+		return errors.New("File does not exist")
+	}
+	ioutil.WriteFile(dir+file, []byte(contents), os.ModePerm)
 	return nil
 }
 
