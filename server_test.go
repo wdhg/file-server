@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -13,6 +14,9 @@ type File struct {
 	valid    bool
 }
 
+var getFiles = []File{
+	{"test.txt", "test file\n", true},
+}
 var createFiles = []File{
 	{"test.txt", "test file\n", true},
 	{"test/test.txt", "test file\n", true},
@@ -21,6 +25,32 @@ var createFiles = []File{
 var deleteFiles = []File{
 	{"test.txt", "", true},
 	{"../test.txt", "", false},
+}
+
+func TestGet(t *testing.T) {
+	os.Mkdir(dir, os.ModePerm)
+
+	for _, file := range getFiles {
+		// test reading nonexistent file
+		_, err := Get(file.path)
+		if err == nil {
+			t.Errorf("Not returning error when trying to read nonexistent file %s", file.path)
+		}
+		// make the file
+		os.MkdirAll(dir+filepath.Dir(file.path), os.ModePerm)
+		fileWriter, _ := os.Create(dir + file.path)
+		fmt.Fprintf(fileWriter, file.contents)
+		// test reading the file
+		contents, err := Get(file.path)
+		if err != nil {
+			t.Errorf("Returning error when trying to read valid file %s", file.path)
+		}
+		if contents != file.contents {
+			t.Errorf("Not writing to file %s properly", file.path)
+		}
+	}
+
+	os.RemoveAll(dir)
 }
 
 func TestCreate(t *testing.T) {
