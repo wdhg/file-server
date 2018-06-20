@@ -18,6 +18,7 @@ type File struct {
 
 var getFiles = []File{
 	{"test.txt", "test file\n", true},
+	{"../test.txt", "", false},
 }
 var createFiles = []File{
 	{"test.txt", "test file\n", true},
@@ -36,6 +37,13 @@ func TestGet(t *testing.T) {
 	os.Mkdir(dir, os.ModePerm)
 
 	for _, file := range getFiles {
+		if !file.valid {
+			if _, err := Get(file.path); err == nil {
+				t.Errorf("Not returning error when trying to access unaccessible file %s", file.path)
+			}
+			continue
+		}
+
 		// test reading nonexistent file
 		_, err := Get(file.path)
 		if err == nil {
@@ -154,6 +162,10 @@ func TestServerGet(t *testing.T) {
 	router := CreateRouter()
 
 	for _, file := range getFiles {
+		if !file.valid {
+			continue
+		}
+
 		// make the file
 		os.Mkdir(dir+filepath.Dir(file.path), os.ModePerm)
 		fileWriter, _ := os.Create(dir + file.path)
