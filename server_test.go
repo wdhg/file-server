@@ -38,6 +38,7 @@ var deleteFiles = []File{
 
 func TestGet(t *testing.T) {
 	os.Mkdir(dir, os.ModePerm)
+	defer os.RemoveAll(dir)
 
 	for _, file := range getFiles {
 		if !file.valid {
@@ -65,12 +66,11 @@ func TestGet(t *testing.T) {
 			t.Errorf("Not writing to file %s properly", file.path)
 		}
 	}
-
-	os.RemoveAll(dir)
 }
 
 func TestCreate(t *testing.T) {
 	os.Mkdir(dir, os.ModePerm)
+	defer os.RemoveAll(dir)
 
 	for _, file := range createFiles {
 		if !file.valid {
@@ -98,12 +98,11 @@ func TestCreate(t *testing.T) {
 			t.Errorf("Recreating %s not returning error", file.path)
 		}
 	}
-
-	os.RemoveAll(dir)
 }
 
 func TestUpdate(t *testing.T) {
 	os.Mkdir(dir, os.ModePerm)
+	defer os.RemoveAll(dir)
 
 	for _, file := range updateFiles {
 		// test updating nonexistent file
@@ -123,12 +122,11 @@ func TestUpdate(t *testing.T) {
 			t.Errorf("%s contents not being updated", file.path)
 		}
 	}
-
-	os.RemoveAll(dir)
 }
 
 func TestDelete(t *testing.T) {
 	os.Mkdir(dir, os.ModePerm)
+	defer os.RemoveAll(dir)
 
 	for _, file := range deleteFiles {
 		if !file.valid {
@@ -156,12 +154,11 @@ func TestDelete(t *testing.T) {
 			t.Errorf("%s not deleted", file.path)
 		}
 	}
-
-	os.RemoveAll(dir)
 }
 
 func TestServerGet(t *testing.T) {
 	os.Mkdir(dir, os.ModePerm)
+	defer os.RemoveAll(dir)
 	gin.SetMode(gin.TestMode)
 	router := CreateRouter()
 
@@ -185,12 +182,11 @@ func TestServerGet(t *testing.T) {
 			t.Errorf("Served file contents for %s are incorrect", file.path)
 		}
 	}
-
-	os.RemoveAll(dir)
 }
 
 func TestServerCreate(t *testing.T) {
 	os.Mkdir(dir, os.ModePerm)
+	defer os.RemoveAll(dir)
 	gin.SetMode(gin.TestMode)
 	router := CreateRouter()
 
@@ -215,12 +211,11 @@ func TestServerCreate(t *testing.T) {
 			t.Errorf("Created file %s doesn't contain correct contents", file.path)
 		}
 	}
-
-	os.RemoveAll(dir)
 }
 
 func TestServerUpdate(t *testing.T) {
 	os.Mkdir(dir, os.ModePerm)
+	defer os.RemoveAll(dir)
 	gin.SetMode(gin.TestMode)
 	router := CreateRouter()
 
@@ -248,6 +243,4 @@ func TestServerUpdate(t *testing.T) {
 			t.Errorf("Updated file %s doesn't contain correct contents", file.path)
 		}
 	}
-
-	os.RemoveAll(dir)
 }
