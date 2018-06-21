@@ -76,7 +76,12 @@ func CreateRouter() *gin.Engine {
 	r := gin.Default()
 
 	r.GET("/files/*path", func(c *gin.Context) {
-		contents, _ := Get(c.Param("path"))
+		contents, err := Get(c.Param("path"))
+
+		if err != nil {
+			c.String(http.StatusBadRequest, err.Error())
+		}
+
 		c.String(http.StatusOK, contents)
 	})
 
