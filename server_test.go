@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/gin-gonic/gin"
 )
 
 type File struct {
@@ -159,6 +161,7 @@ func TestDelete(t *testing.T) {
 
 func TestServerGet(t *testing.T) {
 	os.Mkdir(dir, os.ModePerm)
+	gin.SetMode(gin.TestMode)
 	router := CreateRouter()
 
 	for _, file := range getFiles {
