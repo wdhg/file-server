@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
 	"testing"
@@ -179,6 +180,36 @@ func TestServerGet(t *testing.T) {
 		router.ServeHTTP(writer, req)
 		if writer.Body.String() != file.contents {
 			t.Errorf("Served file contents for %s are incorrect", file.path)
+		}
+	}
+
+	os.RemoveAll(dir)
+}
+
+func TestServerCreate(t *testing.T) {
+	os.Mkdir(dir, os.ModePerm)
+	gin.SetMode(gin.TestMode)
+	router := CreateRouter()
+
+	for _, file := range createFiles {
+		if !file.valid {
+			continue
+		}
+
+		// create url
+		URL, _ := url.Parse("/files/" + file.path)
+		params := url.Values{}
+		params.Add("contents", file.contents)
+		URL.RawQuery = params.Encode()
+		// test is server is creating the file correctly
+		writer := httptest.NewRecorder()
+		req, _ := http.NewRequest("POST", URL.String(), nil)
+		router.ServeHTTP(writer, req)
+		if writer.Code != http.StatusOK {
+			t.Errorf("Receiving error code on valid request")
+		}
+		if dat, _ := ioutil.ReadFile(dir + file.path); string(dat) != file.contents {
+			t.Errorf("Created file %s doesn't contain correct contents", file.path)
 		}
 	}
 
