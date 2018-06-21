@@ -85,6 +85,14 @@ func CreateRouter() *gin.Engine {
 		c.String(http.StatusOK, contents)
 	})
 
+	r.POST("/files/*path", func(c *gin.Context) {
+		err := Create(c.Param("path"), c.Query("contents"))
+
+		if err != nil {
+			c.String(http.StatusBadRequest, err.Error())
+		}
+	})
+
 	return r
 }
 
