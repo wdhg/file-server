@@ -204,7 +204,7 @@ func TestServerCreate(t *testing.T) {
 		params := url.Values{}
 		params.Add("contents", file.contents)
 		URL.RawQuery = params.Encode()
-		// test is server is creating the file correctly
+		// test if server is creating the file correctly
 		writer := httptest.NewRecorder()
 		req, _ := http.NewRequest("POST", URL.String(), nil)
 		router.ServeHTTP(writer, req)
@@ -213,6 +213,39 @@ func TestServerCreate(t *testing.T) {
 		}
 		if dat, _ := ioutil.ReadFile(dir + file.path); string(dat) != file.contents {
 			t.Errorf("Created file %s doesn't contain correct contents", file.path)
+		}
+	}
+
+	os.RemoveAll(dir)
+}
+
+func TestServerUpdate(t *testing.T) {
+	os.Mkdir(dir, os.ModePerm)
+	gin.SetMode(gin.TestMode)
+	router := CreateRouter()
+
+	for _, file := range updateFiles {
+		if !file.valid {
+			continue
+		}
+
+		// create url
+		URL, _ := url.Parse("/files/" + file.path)
+		params := url.Values{}
+		params.Add("contents", file.contents)
+		URL.RawQuery = params.Encode()
+		// make the file
+		os.MkdirAll(filepath.Dir(file.path), os.ModePerm)
+		os.Create(dir + file.path)
+		// test if server is update files
+		writer := httptest.NewRecorder()
+		req, _ := http.NewRequest("PUT", URL.String(), nil)
+		router.ServeHTTP(writer, req)
+		if writer.Code != http.StatusOK {
+			t.Errorf("Receiving error code on valid request")
+		}
+		if dat, _ := ioutil.ReadFile(dir + file.path); string(dat) != file.contents {
+			t.Errorf("Updated file %s doesn't contain correct contents", file.path)
 		}
 	}
 
