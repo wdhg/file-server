@@ -178,6 +178,9 @@ func TestServerGet(t *testing.T) {
 		writer := httptest.NewRecorder()
 		req, _ := http.NewRequest("GET", "/files/"+file.path, nil)
 		router.ServeHTTP(writer, req)
+		if writer.Code != http.StatusOK {
+			t.Errorf("Receiving error code on valid request")
+		}
 		if writer.Body.String() != file.contents {
 			t.Errorf("Served file contents for %s are incorrect", file.path)
 		}
