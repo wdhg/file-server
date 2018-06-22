@@ -18,6 +18,7 @@ func TestServer(t *testing.T) {
 	defer os.RemoveAll(dir)
 	gin.SetMode(gin.TestMode)
 	router := CreateRouter()
+	writer := httptest.NewRecorder()
 
 	// test get
 	for _, file := range getFiles {
@@ -30,7 +31,6 @@ func TestServer(t *testing.T) {
 		fileWriter, _ := os.Create(dir + file.path)
 		fmt.Fprintf(fileWriter, file.contents)
 		// test getting file contents through the server
-		writer := httptest.NewRecorder()
 		req, _ := http.NewRequest(http.MethodGet, "/files/"+file.path, nil)
 		router.ServeHTTP(writer, req)
 		if writer.Code != http.StatusOK {
@@ -55,7 +55,6 @@ func TestServer(t *testing.T) {
 		params.Add("contents", file.contents)
 		URL.RawQuery = params.Encode()
 		// test if server is creating the file correctly
-		writer := httptest.NewRecorder()
 		req, _ := http.NewRequest(http.MethodPost, URL.String(), nil)
 		router.ServeHTTP(writer, req)
 		if writer.Code != http.StatusOK {
@@ -83,7 +82,6 @@ func TestServer(t *testing.T) {
 		os.MkdirAll(filepath.Dir(file.path), os.ModePerm)
 		os.Create(dir + file.path)
 		// test if server is update files
-		writer := httptest.NewRecorder()
 		req, _ := http.NewRequest(http.MethodPut, URL.String(), nil)
 		router.ServeHTTP(writer, req)
 		if writer.Code != http.StatusOK {
@@ -106,7 +104,6 @@ func TestServer(t *testing.T) {
 		os.MkdirAll(filepath.Dir(file.path), os.ModePerm)
 		os.Create(dir + file.path)
 		// test if server deletes the file
-		writer := httptest.NewRecorder()
 		req, _ := http.NewRequest(http.MethodDelete, "/files/"+file.path, nil)
 		router.ServeHTTP(writer, req)
 		if writer.Code != http.StatusOK {
