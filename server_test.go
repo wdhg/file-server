@@ -13,6 +13,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func makeFile(file File) {
+	os.Mkdir(dir+filepath.Dir(file.path), os.ModePerm)
+	fileWriter, _ := os.Create(dir + file.path)
+	fmt.Fprintf(fileWriter, file.contents)
+}
+
 func TestServer(t *testing.T) {
 	os.Mkdir(dir, os.ModePerm)
 	defer os.RemoveAll(dir)
@@ -26,10 +32,7 @@ func TestServer(t *testing.T) {
 			continue
 		}
 
-		// make the file
-		os.Mkdir(dir+filepath.Dir(file.path), os.ModePerm)
-		fileWriter, _ := os.Create(dir + file.path)
-		fmt.Fprintf(fileWriter, file.contents)
+		makeFile(file)
 		// test getting file contents through the server
 		req, _ := http.NewRequest(http.MethodGet, "/files/"+file.path, nil)
 		router.ServeHTTP(writer, req)
@@ -78,9 +81,8 @@ func TestServer(t *testing.T) {
 		params := url.Values{}
 		params.Add("contents", file.contents)
 		URL.RawQuery = params.Encode()
-		// make the file
-		os.MkdirAll(filepath.Dir(file.path), os.ModePerm)
-		os.Create(dir + file.path)
+
+		makeFile(file)
 		// test if server is update files
 		req, _ := http.NewRequest(http.MethodPut, URL.String(), nil)
 		router.ServeHTTP(writer, req)
@@ -100,9 +102,7 @@ func TestServer(t *testing.T) {
 			continue
 		}
 
-		// make the file
-		os.MkdirAll(filepath.Dir(file.path), os.ModePerm)
-		os.Create(dir + file.path)
+		makeFile(file)
 		// test if server deletes the file
 		req, _ := http.NewRequest(http.MethodDelete, "/files/"+file.path, nil)
 		router.ServeHTTP(writer, req)
