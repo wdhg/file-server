@@ -101,6 +101,14 @@ func CreateRouter() *gin.Engine {
 		}
 	})
 
+	r.DELETE("/files/*path", func(c *gin.Context) {
+		err := Delete(c.Param("path"))
+
+		if err != nil {
+			c.String(http.StatusBadRequest, err.Error())
+		}
+	})
+
 	return r
 }
 
