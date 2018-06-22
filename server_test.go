@@ -76,7 +76,7 @@ func TestServer(t *testing.T) {
 			continue
 		}
 
-		// create url
+		// create url for encoding url parameters
 		URL, _ := url.Parse("/files/" + file.path)
 		params := url.Values{}
 		params.Add("contents", file.contents)
