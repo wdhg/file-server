@@ -25,6 +25,7 @@ var createFiles = []File{
 }
 var updateFiles = []File{
 	{"test.txt", "test file\n", true},
+	{"../test.txt", "test file\n", false},
 }
 var deleteFiles = []File{
 	{"test.txt", "", true},
@@ -100,6 +101,14 @@ func TestUpdate(t *testing.T) {
 	defer os.RemoveAll(dir)
 
 	for _, file := range updateFiles {
+		if !file.valid {
+			err := Update(file.path, file.contents)
+			if err == nil {
+				t.Errorf("Not returning error when trying to access unaccessible file %s", file.path)
+			}
+			continue
+		}
+
 		// test updating nonexistent file
 		err := Update(file.path, file.contents)
 		if err == nil {
