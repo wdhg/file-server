@@ -244,3 +244,30 @@ func TestServerUpdate(t *testing.T) {
 		}
 	}
 }
+
+func TestServerDelete(t *testing.T) {
+	os.Mkdir(dir, os.ModePerm)
+	defer os.RemoveAll(dir)
+	gin.SetMode(gin.TestMode)
+	router := CreateRouter()
+
+	for _, file := range deleteFiles {
+		if !file.valid {
+			continue
+		}
+
+		// make the file
+		os.MkdirAll(filepath.Dir(file.path), os.ModePerm)
+		os.Create(file.path)
+		// test if server deletes the file
+		writer := httptest.NewRecorder()
+		req, _ := http.NewRequest("DELETE", "/files/"+file.path, nil)
+		router.ServeHTTP(writer, req)
+		if writer.Code != http.StatusOK {
+			t.Errorf("Receiving error code on valid request")
+		}
+		if _, err := os.Stat(dir + file.path); !os.IsNotExist(err) {
+			t.Errorf("%s not deleted", file.path)
+		}
+	}
+}
