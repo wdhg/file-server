@@ -173,7 +173,7 @@ func TestServer(t *testing.T) {
 		fmt.Fprintf(fileWriter, file.contents)
 		// test getting file contents through the server
 		writer := httptest.NewRecorder()
-		req, _ := http.NewRequest("GET", "/files/"+file.path, nil)
+		req, _ := http.NewRequest(http.MethodGet, "/files/"+file.path, nil)
 		router.ServeHTTP(writer, req)
 		if writer.Code != http.StatusOK {
 			t.Errorf("Receiving error code on valid request")
@@ -198,7 +198,7 @@ func TestServer(t *testing.T) {
 		URL.RawQuery = params.Encode()
 		// test if server is creating the file correctly
 		writer := httptest.NewRecorder()
-		req, _ := http.NewRequest("POST", URL.String(), nil)
+		req, _ := http.NewRequest(http.MethodPost, URL.String(), nil)
 		router.ServeHTTP(writer, req)
 		if writer.Code != http.StatusOK {
 			t.Errorf("Receiving error code on valid request")
@@ -226,7 +226,7 @@ func TestServer(t *testing.T) {
 		os.Create(dir + file.path)
 		// test if server is update files
 		writer := httptest.NewRecorder()
-		req, _ := http.NewRequest("PUT", URL.String(), nil)
+		req, _ := http.NewRequest(http.MethodPut, URL.String(), nil)
 		router.ServeHTTP(writer, req)
 		if writer.Code != http.StatusOK {
 			t.Errorf("Receiving error code on valid request")
@@ -249,7 +249,7 @@ func TestServer(t *testing.T) {
 		os.Create(dir + file.path)
 		// test if server deletes the file
 		writer := httptest.NewRecorder()
-		req, _ := http.NewRequest("DELETE", "/files/"+file.path, nil)
+		req, _ := http.NewRequest(http.MethodDelete, "/files/"+file.path, nil)
 		router.ServeHTTP(writer, req)
 		if writer.Code != http.StatusOK {
 			t.Errorf("Receiving error code on valid request")
