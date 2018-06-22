@@ -15,6 +15,7 @@ import (
 
 func TestServer(t *testing.T) {
 	os.Mkdir(dir, os.ModePerm)
+	defer os.RemoveAll(dir)
 	gin.SetMode(gin.TestMode)
 	router := CreateRouter()
 
