@@ -156,12 +156,12 @@ func TestDelete(t *testing.T) {
 	}
 }
 
-func TestServerGet(t *testing.T) {
+func TestServer(t *testing.T) {
 	os.Mkdir(dir, os.ModePerm)
-	defer os.RemoveAll(dir)
 	gin.SetMode(gin.TestMode)
 	router := CreateRouter()
 
+	// test get
 	for _, file := range getFiles {
 		if !file.valid {
 			continue
@@ -181,15 +181,11 @@ func TestServerGet(t *testing.T) {
 		if writer.Body.String() != file.contents {
 			t.Errorf("Served file contents for %s are incorrect", file.path)
 		}
+
+		os.RemoveAll(dir + filepath.Dir(file.path))
 	}
-}
 
-func TestServerCreate(t *testing.T) {
-	os.Mkdir(dir, os.ModePerm)
-	defer os.RemoveAll(dir)
-	gin.SetMode(gin.TestMode)
-	router := CreateRouter()
-
+	// test create
 	for _, file := range createFiles {
 		if !file.valid {
 			continue
@@ -210,15 +206,11 @@ func TestServerCreate(t *testing.T) {
 		if dat, _ := ioutil.ReadFile(dir + file.path); string(dat) != file.contents {
 			t.Errorf("Created file %s doesn't contain correct contents", file.path)
 		}
+
+		os.RemoveAll(dir + filepath.Dir(file.path))
 	}
-}
 
-func TestServerUpdate(t *testing.T) {
-	os.Mkdir(dir, os.ModePerm)
-	defer os.RemoveAll(dir)
-	gin.SetMode(gin.TestMode)
-	router := CreateRouter()
-
+	// test update
 	for _, file := range updateFiles {
 		if !file.valid {
 			continue
@@ -242,15 +234,11 @@ func TestServerUpdate(t *testing.T) {
 		if dat, _ := ioutil.ReadFile(dir + file.path); string(dat) != file.contents {
 			t.Errorf("Updated file %s doesn't contain correct contents", file.path)
 		}
+
+		os.RemoveAll(dir + filepath.Dir(file.path))
 	}
-}
 
-func TestServerDelete(t *testing.T) {
-	os.Mkdir(dir, os.ModePerm)
-	defer os.RemoveAll(dir)
-	gin.SetMode(gin.TestMode)
-	router := CreateRouter()
-
+	// test delete
 	for _, file := range deleteFiles {
 		if !file.valid {
 			continue
@@ -258,7 +246,7 @@ func TestServerDelete(t *testing.T) {
 
 		// make the file
 		os.MkdirAll(filepath.Dir(file.path), os.ModePerm)
-		os.Create(file.path)
+		os.Create(dir + file.path)
 		// test if server deletes the file
 		writer := httptest.NewRecorder()
 		req, _ := http.NewRequest("DELETE", "/files/"+file.path, nil)
@@ -269,5 +257,7 @@ func TestServerDelete(t *testing.T) {
 		if _, err := os.Stat(dir + file.path); !os.IsNotExist(err) {
 			t.Errorf("%s not deleted", file.path)
 		}
+
+		os.RemoveAll(dir + filepath.Dir(file.path))
 	}
 }
