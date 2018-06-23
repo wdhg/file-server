@@ -21,7 +21,7 @@ func makeFile(file File, writeContents bool) {
 	}
 }
 
-func testMethod(method string, files []File) func(*testing.T) {
+func testServerMethod(method string, files []File) func(*testing.T) {
 	return func(t *testing.T) {
 		os.Mkdir(dir, os.ModePerm)
 		defer os.RemoveAll(dir)
@@ -80,8 +80,8 @@ func testMethod(method string, files []File) func(*testing.T) {
 }
 
 func TestServer(t *testing.T) {
-	t.Run(http.MethodGet, testMethod(http.MethodGet, getFiles))
-	t.Run(http.MethodPost, testMethod(http.MethodPost, createFiles))
-	t.Run(http.MethodPut, testMethod(http.MethodPut, updateFiles))
-	t.Run(http.MethodDelete, testMethod(http.MethodDelete, deleteFiles))
+	t.Run(http.MethodGet, testServerMethod(http.MethodGet, getFiles))
+	t.Run(http.MethodPost, testServerMethod(http.MethodPost, createFiles))
+	t.Run(http.MethodPut, testServerMethod(http.MethodPut, updateFiles))
+	t.Run(http.MethodDelete, testServerMethod(http.MethodDelete, deleteFiles))
 }
