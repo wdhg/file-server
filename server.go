@@ -7,42 +7,38 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func routeFilesRequest(c *gin.Context) {
+	path := c.Param("path")
+	contentsParam := c.Query("contents")
+	response := ""
+	var err error
+
+	switch c.Request.Method {
+	case http.MethodGet:
+		response, err = Get(path)
+	case http.MethodPost:
+		err = Create(path, contentsParam)
+	case http.MethodPut:
+		err = Update(path, contentsParam)
+	case http.MethodDelete:
+		err = Delete(path)
+	}
+
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.String(http.StatusOK, response)
+}
+
 func CreateRouter() *gin.Engine {
 	r := gin.Default()
 
-	r.GET("/files/*path", func(c *gin.Context) {
-		contents, err := Get(c.Param("path"))
-
-		if err != nil {
-			c.String(http.StatusBadRequest, err.Error())
-		}
-
-		c.String(http.StatusOK, contents)
-	})
-
-	r.POST("/files/*path", func(c *gin.Context) {
-		err := Create(c.Param("path"), c.Query("contents"))
-
-		if err != nil {
-			c.String(http.StatusBadRequest, err.Error())
-		}
-	})
-
-	r.PUT("/files/*path", func(c *gin.Context) {
-		err := Update(c.Param("path"), c.Query("contents"))
-
-		if err != nil {
-			c.String(http.StatusBadRequest, err.Error())
-		}
-	})
-
-	r.DELETE("/files/*path", func(c *gin.Context) {
-		err := Delete(c.Param("path"))
-
-		if err != nil {
-			c.String(http.StatusBadRequest, err.Error())
-		}
-	})
+	r.GET("/files/*path", routeFilesRequest)
+	r.POST("/files/*path", routeFilesRequest)
+	r.PUT("/files/*path", routeFilesRequest)
+	r.DELETE("/files/*path", routeFilesRequest)
 
 	return r
 }
